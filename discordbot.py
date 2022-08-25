@@ -9,7 +9,7 @@ import pyshorteners as ps
 #import tracemalloc
 #tracemalloc.start()
 
-TOKEN = 'OTgyNDMwOTA4MjgxOTMzODY1.GTzV_E.j_tFPhEF5t_dc5UT4Fmzx-UC51NaAXeefxuekE'
+TOKEN = 'OTgyNDMwOTA4MjgxOTMzODY1.Gghmh1.fpIXU7vR95-ZU5VH7sO8VO-JZwbBLvy-HDo8wc'
 
 intents=intents=discord.Intents.all()#for member joining/leaving
 
