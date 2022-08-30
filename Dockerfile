@@ -3,7 +3,7 @@ FROM gorialis/discord.py
 
 COPY requirements.txt /
 RUN pip3 install -r /requirements.txt
-RUN pip3 install gunicorn Flask pyshorteners requests 
+RUN pip3 install gunicorn Flask pyshorteners requests jsons 
 COPY . /app
 WORKDIR /app
 RUN chmod +x gunicorn.sh
