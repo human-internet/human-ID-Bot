@@ -1,25 +1,22 @@
-from flask import Flask, jsonify, render_template
-import requests
-import json
+from flask import Flask, jsonify, render_template, request, json
 
 app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template("index.html")
-
-@app.route("/success") 
+    return render_template('index.html')
+@app.route("/success")
 def success_bot():
-    return render_template("success.html")
+   return render_template("success.html")
 
 @app.route("/failure" )
-def failure_bot(): 
-    return  render_template("failure.html")
+def failure_bot():
+   return  render_template("failure.html")
 
 @app.route("/homepage")
 def homepage():
-    return render_template("homepage.html")
-
+   return render_template("homepage.html")
+#
 if __name__ == "__main__":
     #from waitress import serve
     #serve(app, host="0.0.0.0", port=22)
