@@ -3,24 +3,28 @@ import asyncio
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get
+from discord import Webhook
+import aiohttp
 import http.client
 import requests
 import pyshorteners as ps
 #import tracemalloc
 #tracemalloc.start()
 
-TOKEN = 'OTgyNDMwOTA4MjgxOTMzODY1.GlFwt4.iQH-4dyZGSk8ip6ZA5RPQ9rOeRVmX_iU-OvMvI'
+TOKEN = 'OTgyNDMwOTA4MjgxOTMzODY1.GiV3vx.czDDtKlUtJbFRkNhrvsWvdv5w5O4DZTr2xGwSQ'
 
 intents=intents=discord.Intents.all()#for member joining/leaving
 
 #client and bot
-client = commands.Bot(command_prefix='!',  help_command=None)
+client = commands.Bot(command_prefix='!')
 
 #client = discord.Client()
 bot = commands.Bot(command_prefix='.', intents=intents)
 
 #get channel_name
 channel_name_for_bot  = 'verify'
+
+
 
 
 #Makes sure Bot is Getting Response
@@ -31,21 +35,19 @@ async def on_ready():
 
 #Commands -- !verify, !help, !create, 'Hello', 'Bye'
 @client.event
-async def on_message(msg):
+async def on_message(message):
+    msg =  message
     username = str(msg.author).split('#')[0]
     content = str(msg.content)
     channel = str(msg.channel.name)
 
 
-    if msg.author == client.user:
-        return
-    #if content.lower() == "help" or content.lower() == "!help":
-    #   await msg.channel.send(f"```Step 1: Begin by typing !create to create the verification channel.\nStep 2: Add the Verification Bot to the 'Verify' channel that has just been created.\nStep 3: Begin typing !verify to begin the verification process!```")
-    #    return
-    #if msg.channel.name == channel_name_for_bot:
+    if message.author == client.user:
+       return
     if content.lower() == 'thanks' or content.lower() == 'thank you' or content.lower() == 'thank':
         await msg.channel.send(f"You Welcome {username}!")
         return
+
     elif content.lower() == "help" or content.lower() == "!help":
         await msg.channel.send(f'```Step 1: Use the link to authorize the bot onto the server: https://discord.com/api/oauth2/authorize?client_id=982430908281933865&permissions=534992386160&scope=bot\nStep 2: Go to the channel where you want the bot added and click the gear icon next to the channel. Go to *Permissions* and then *Add Members and Roles*\nStep 3: Search for *Chat Bot* and Add!\nStep 4: Type !verify to begin the verification process.```')
         return
@@ -55,9 +57,22 @@ async def on_message(msg):
         cs = 'g_zsgbW00owFeQHKmfyXP7p6_iUJ9U797_iThf19AsP-jeZu7DWeGqJ.V3aLRRzm'
         headers = {'client-id': 'SERVER_4R3QUQRNQOSK9TOTWHD7Q2', 'client-secret': cs , 'Content-Type' : 'application/json' }
         response = requests.post('https://core.human-id.org/v0.0.3/server/users/web-login', headers=headers)
+        print(response.json())
         return_url = response.json()['data']['webLoginUrl']
         short_url = ps.Shortener().tinyurl.short(return_url)
+         
         await msg.channel.send(short_url)
+        CLIENT_ID = '982430908281933865'
+        cs = '6fJVAg9lYw9MtrLYF0DZM-67-W_aDC6A'
+        response = requests.post('https://s-api.human-id.org/v1')
+        print(response.json())  
+        #connect to
+        #async with aiohttp.ClientSession() as session:
+        #    webhook = Webhook.from_url('url-here', session=session)
+        #    await webhook.send('Hello World') 
+
+        print("verification successful")
+        
         #msg.author gets new role when verification is complete
 
         #if response.json()['success'] == True:
@@ -80,15 +95,10 @@ async def on_message(msg):
     elif content.lower() == '!create':
         if  get(msg.guild.text_channels, name="verify"):
             await msg.channel.send(f"Verification Channel already created")
+            return
         else:
             await msg.guild.create_text_channel('verify')
             return
-        # https://stg-web-login.human-id.org/login?t=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdXJwb3NlIjoid2ViLWxvZ2luL3JlcXVlc3QtbG9naW4tb3RwIiwic2lnbmF0dXJlIjoiZDVmZmQyODYxY2IzZDM5YjQ5NDY5ZTg0MGNkMGJlMGU5OTIzYjY1MWJiM2EyMTYyY2RiZjBhMjZjNzQwYTAwZiIsImlhdCI6MTY1NTQzMzgyNSwiZXhwIjoxNjU1NDM0MTI1LCJzdWIiOiJTRVJWRVJfR1hJVFM3TlZZM0RETVozNVdVSDdDWCIsImp0aSI6ImQ5TFJsdzFRRXFmMG54TGJTMHRCQjlBaVFQb0lQWDVJOUpPbHlrMzdYOFRvT0xmRHdsWnE1WlBwYVJHWkxXNlUifQ.CTcjfbw5mlqUvgqPLZyxiRRRafFMbnYlyA14XE9jkU4&a=IO5T8PZH2O15N8SV&lang=en&priority_country=ID&s=w")
-            #JWT TOKEN IS EXPIRED
-            #step 1: connect to humanID server    so success on humanID server authenticates and give approval msg----   api connect?
-            #step 2: complete verfication process ------ phone number (doesnt need to be coded)
-           #step 3: change member roles          ------- Code: client_role = client.get_guild(), wait payload.member.add_roles('verified')
-        return
 
 
 # AS MEMEBER JOINS, MESSAGE DISPLAYING!
@@ -123,11 +133,11 @@ async def on_member_remove(member):
 
 
 
-#@client.command()
-#@commands.has_guild_permissions(administrator=True)
-#async def send_message(ctx, channel: discord.TextChannel, *, message: str):
-#    await channel.send(message)
-#    return
+@client.command()
+@commands.has_guild_permissions(administrator=True)
+async def send_message(ctx, channel: discord.TextChannel, *, message: str):
+    await channel.send(message)
+    return
 
 
 #Add new role
@@ -141,6 +151,16 @@ async def addRole(self, ctx, user: discord.Member, *, role: discord.Role):
 #    role = get(member.server.roles, name="Verified")
 #   await member.add_roles(member, role)
         print("should have worked")
+
+
+async def on_raw_reaction_add(self, payload):
+    if payload.message_id !=  self.target_message_id:
+        return
+    guild = client.get_guild(payload.guild_id)
+    print('hsduifsdf')
+    print(payload.emoji.name)
+    
+
 
 #Execution
 client.run(TOKEN)

@@ -9,7 +9,7 @@ WORKDIR /app
 RUN chmod +x gunicorn.sh
 USER root
 RUN  ls /app
-ENTRYPOINT ["/app/gunicorn.sh"]
+#ENTRYPOINT ["/app/gunicorn.sh"]
 
 
 #RUN mkdir -p /usr/src/bot
@@ -17,4 +17,4 @@ ENTRYPOINT ["/app/gunicorn.sh"]
 #COPY . .
 #RUN apt-get update
 
-#CMD [ "python3", "discordbot.py"]
+CMD [ "python3", "discordbot.py"]
