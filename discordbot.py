@@ -11,7 +11,7 @@ import pyshorteners as ps
 #import tracemalloc
 #tracemalloc.start()
 
-TOKEN = 'OTgyNDMwOTA4MjgxOTMzODY1.GiV3vx.czDDtKlUtJbFRkNhrvsWvdv5w5O4DZTr2xGwSQ'
+TOKEN = 'OTgyNDMwOTA4MjgxOTMzODY1.GSpjIb.BqzgHIhgNOQeIo3gQEFYbMGeDH__pI9hABqAAc'
 
 intents=intents=discord.Intents.all()#for member joining/leaving
 
@@ -72,7 +72,7 @@ async def on_message(message):
         #    await webhook.send('Hello World') 
 
         print("verification successful")
-        
+                
         #msg.author gets new role when verification is complete
 
         #if response.json()['success'] == True:
