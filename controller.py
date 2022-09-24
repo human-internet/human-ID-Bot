@@ -1,5 +1,4 @@
-import os
-from web.app.static import static
+import os from web.app.static import static
 import mvc_exceptions as mvc_exc
 import basic_backend
 

@@ -10,8 +10,19 @@ import requests
 import pyshorteners as ps
 #import tracemalloc
 #tracemalloc.start()
+from flask_mysqldb import MySQL
+from flask import flask
+app = Flask(__name__)
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_DB'] = 'flask'
+ 
+mysql = MySQL(app)
+cursor = mysql.connection.cursor()
+cursor.execute(''' CREATE TABLE Users(ID NOT NULL,  USER VARCHAR(50)) ''')
 
-TOKEN = 'OTgyNDMwOTA4MjgxOTMzODY1.GSpjIb.BqzgHIhgNOQeIo3gQEFYbMGeDH__pI9hABqAAc'
+TOKEN = 'OTgyNDMwOTA4MjgxOTMzODY1.GSLvjq.qmSSi6Y7cUSrRD6am1l3ufj2syAOO4J66c-Yis'
 
 intents=intents=discord.Intents.all()#for member joining/leaving
 
@@ -52,22 +63,28 @@ async def on_message(message):
         await msg.channel.send(f'```Step 1: Use the link to authorize the bot onto the server: https://discord.com/api/oauth2/authorize?client_id=982430908281933865&permissions=534992386160&scope=bot\nStep 2: Go to the channel where you want the bot added and click the gear icon next to the channel. Go to *Permissions* and then *Add Members and Roles*\nStep 3: Search for *Chat Bot* and Add!\nStep 4: Type !verify to begin the verification process.```')
         return
     elif content.lower() == '!verify':
-        print("Verification Sent!")
+        #print("Verification Sent!")
         CLIENT_ID = 'SERVER_4R3QUQRNQOSK9TOTWHD7Q2'
         cs = 'g_zsgbW00owFeQHKmfyXP7p6_iUJ9U797_iThf19AsP-jeZu7DWeGqJ.V3aLRRzm'
         headers = {'client-id': 'SERVER_4R3QUQRNQOSK9TOTWHD7Q2', 'client-secret': cs , 'Content-Type' : 'application/json' }
         response = requests.post('https://core.human-id.org/v0.0.3/server/users/web-login', headers=headers)
-        print(response.json())
+        #print(response.json())
         return_url = response.json()['data']['webLoginUrl']
         short_url = ps.Shortener().tinyurl.short(return_url)
          
+        #print(response.json())
         await msg.channel.send(short_url)
+        #URL SENT - S U C C E S S -
+        #-----------------------------------------------------------------------------------------------------------
+         
         CLIENT_ID = '982430908281933865'
         cs = '6fJVAg9lYw9MtrLYF0DZM-67-W_aDC6A'
-        response = requests.post('https://s-api.human-id.org/v1')
+        headers = {'client-id': CLIENT_ID, 'client-secret': cs , 'Content-Type' : 'application/json' }
+        response = requests.post('https://s-api.human-id.org/v1', headers=headers)
+        #you are verified
+        
         print(response.json())  
-        #connect to
-        #async with aiohttp.ClientSession() as session:
+        #connect to #async with aiohttp.ClientSession() as session:
         #    webhook = Webhook.from_url('url-here', session=session)
         #    await webhook.send('Hello World') 
 
@@ -82,6 +99,31 @@ async def on_message(message):
         #return_value = response2.json()
         #print(response2.json())
         #print(return_value['success'])
+        #if return_value['success'] == True:
+        #    et = return_value['exchangeToken']
+        #    print('http://18.225.5.208:8000/success_bot?et=' + et)
+        #else:
+        #    await webhook.send('Hello World') 
+
+        print("verification successful")
+                
+        #msg.author gets new role when verification is complete
+
+        #if response.json()['success'] == True:
+        #
+        #print(headers)
+        #response2 =  requests.post('https://core.human-id.org/v0.0.3/server/users/exchange', headers=headers)
+        #return_value = response2.json()
+        #print(response2.json())
+        #print(return_value['success'])
+        #if return_value['success'] == True:
+        #    et = return_value['exchangeToken']
+        #    print('http://18.225.5.208:8000/success_bot?et=' + et)
+        #else:
+        #    print('http://18.225.5.208:8000/success_bot?et=' + et)
+        #else:
+        #    print('http://18.225.5.208:8000/success_bot?et=' + et)
+        #else:
         #if return_value['success'] == True:
         #    et = return_value['exchangeToken']
         #    print('http://18.225.5.208:8000/success_bot?et=' + et)
@@ -136,6 +178,7 @@ async def on_member_remove(member):
 @client.command()
 @commands.has_guild_permissions(administrator=True)
 async def send_message(ctx, channel: discord.TextChannel, *, message: str):
+    print("call send message function")
     await channel.send(message)
     return
 
@@ -151,30 +194,4 @@ async def addRole(self, ctx, user: discord.Member, *, role: discord.Role):
 #    role = get(member.server.roles, name="Verified")
 #   await member.add_roles(member, role)
         print("should have worked")
-
-
-async def on_raw_reaction_add(self, payload):
-    if payload.message_id !=  self.target_message_id:
-        return
-    guild = client.get_guild(payload.guild_id)
-    print('hsduifsdf')
-    print(payload.emoji.name)
-    
-
-
-#Execution
-client.run(TOKEN)
-
-
-#Links
-#-----------------------------------------------------------------------------------
-#https://bit.ly/3awjgD3
-#https://web-login.human-id.org/login?t=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdXJwb3NlIjoid2ViLWxvZ2luL3JlcXVlc3QtbG9naW4tb3RwIiwic2lnbmF0dXJlIjoiZTk4YTgxZmJkM2QzNDA4NzJmY2VlZDE3YTUwYTM1MjRhM2NjNmM3MzhiOWMwNjRlYWY3YjJjZTM3MjAyMzBmNyIsImlhdCI6MTY1NDUwMDQ2NywiZXhwIjoxNjU0NTAwNzY3LCJzdWIiOiJTRVJWRVJfR1hJVFM3TlZZM0RETVozNVdVSDdDWCIsImp0aSI6Ijh5cE1GTnpNQmF4Y1Q1NWZLdXB6MUJjZndwZEZaZWI4OUxCcVlyWkRIZ3g2YTdRcEZRNndOMDNSMmJ4eTEyNHkifQ.WDlXMVFXVq-qhIZPHb_FOKfdPhATKaZ6SNcUd49P2to&a=IO5T8PZH2O15N8SV&lang=en_US&priority_country=US&s=w
-#https://docs.human-id.org/web-sdk-integration-guide/example-web-sdk-integration
-
-
-#Notes
-#---------------------------------------------------------------------------------------
-#msg.channel.send(f'Hello {username}! Type !verify to begin verification process!'i:wq
-#
 
